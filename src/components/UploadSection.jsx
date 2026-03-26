@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { Upload, Youtube, FileText, Loader2, ArrowRight } from 'lucide-react';
+import { Upload, Youtube, FileText, Loader2, ArrowRight, Zap } from 'lucide-react';
 import axios from 'axios';
 
 const UploadSection = ({ onUploadComplete }) => {
