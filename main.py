@@ -1,6 +1,7 @@
-from fastapi import FastAPI, BackgroundTasks, UploadFile, File, Form, HTTPException
+from fastapi import FastAPI, UploadFile, File, Form, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
+from fastapi.responses import StreamingResponse
+from pydantic import BaseModel
 from core.config import settings
 from core.database import connect_to_mongo, close_mongo_connection, db
 from services.video_service import video_service
@@ -8,6 +9,7 @@ from services.doc_service import doc_service
 from services.ai_service import ai_service
 from services.report_service import report_service
 import os
+import io
 import uuid
 import datetime
 
@@ -169,11 +171,29 @@ async def download_report(process_id: str):
         raise HTTPException(status_code=404, detail="Analysis report not ready or not found")
     
     filename = record.get("filename") or "Content Analysis"
-    os.makedirs(settings.UPLOAD_DIR, exist_ok=True)
-    pdf_path = report_service.generate_pdf_report(record["analysis"], filename, process_id)
+    # Generate PDF as bytes in memory (no filesystem needed)
+    pdf_bytes = report_service.generate_pdf_bytes(record["analysis"], filename, process_id)
     
-    return FileResponse(
-        path=pdf_path,
-        filename=f"Analysis_Report_{process_id}.pdf",
-        media_type='application/pdf'
+    return StreamingResponse(
+        io.BytesIO(pdf_bytes),
+        media_type='application/pdf',
+        headers={"Content-Disposition": f'attachment; filename="Analysis_Report_{process_id}.pdf"'}
     )
+
+# --- Chat with AI ---
+class ChatRequest(BaseModel):
+    message: str
+
+@app.post("/api/v1/chat/{process_id}")
+async def chat_with_ai(process_id: str, req: ChatRequest):
+    record = await db.db.uploads.find_one({"process_id": process_id})
+    if not record or record.get("status") != "completed":
+        raise HTTPException(status_code=404, detail="Analysis not found")
+    
+    # Build context from the document content and analysis
+    doc_content = record.get("content") or record.get("transcript") or ""
+    analysis = record.get("analysis", {})
+    summary = analysis.get("summary", "")
+    
+    answer = await ai_service.chat_about_content(doc_content, summary, req.message)
+    return {"reply": answer}

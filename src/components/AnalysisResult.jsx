@@ -21,7 +21,28 @@ import { motion } from 'framer-motion';
 const AnalysisResult = ({ processId, onBack }) => {
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [activeTab, setActiveTab] = useState('summary'); // summary, transcript, insights
+    const [activeTab, setActiveTab] = useState('summary');
+    const [chatMessages, setChatMessages] = useState([]);
+    const [chatInput, setChatInput] = useState('');
+    const [isChatLoading, setIsChatLoading] = useState(false);
+
+    const handleChatSend = async (e) => {
+        e.preventDefault();
+        if (!chatInput.trim() || isChatLoading) return;
+
+        const userMsg = chatInput.trim();
+        setChatMessages(prev => [...prev, { role: 'user', text: userMsg }]);
+        setChatInput('');
+        setIsChatLoading(true);
+
+        try {
+            const res = await axios.post(`/api/v1/chat/${processId}`, { message: userMsg });
+            setChatMessages(prev => [...prev, { role: 'ai', text: res.data.reply }]);
+        } catch (err) {
+            setChatMessages(prev => [...prev, { role: 'ai', text: 'Sorry, I could not process your question. Please try again.' }]);
+        }
+        setIsChatLoading(false);
+    };
 
     const fetchStatus = useCallback(async () => {
         try {
@@ -238,17 +259,55 @@ const AnalysisResult = ({ processId, onBack }) => {
                         </div>
                     </div>
 
-                    <div className="glass-card p-6 bg-gradient-to-br from-indigo-600/20 to-purple-600/20 border-indigo-500/20">
+                    {/* Chat with AI */}
+                    <div className="glass-card p-6 bg-gradient-to-br from-indigo-50 to-purple-50 border-indigo-200">
                         <div className="flex items-center gap-3 mb-4">
-                            <MessageSquare className="text-indigo-400" />
+                            <MessageSquare className="text-indigo-600" />
                             <h3 className="font-bold text-slate-900">Chat with AI</h3>
                         </div>
-                        <p className="text-slate-600 text-sm mb-4 leading-relaxed">
-                            Questions about this {type}? Our AI has indexed the full content and is ready to answer anything.
-                        </p>
-                        <button className="w-full glass-button bg-indigo-600 hover:bg-indigo-500">
-                            Start Chat Session
-                        </button>
+
+                        {/* Chat Messages */}
+                        <div className="space-y-3 max-h-[300px] overflow-y-auto mb-4">
+                            {chatMessages.length === 0 && (
+                                <p className="text-slate-500 text-sm italic">Ask anything about this {type}...</p>
+                            )}
+                            {chatMessages.map((msg, idx) => (
+                                <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                                    <div className={`max-w-[85%] px-4 py-2.5 rounded-2xl text-sm leading-relaxed ${
+                                        msg.role === 'user'
+                                            ? 'bg-indigo-600 text-white rounded-br-md'
+                                            : 'bg-white border border-slate-200 text-slate-700 rounded-bl-md shadow-sm'
+                                    }`}>
+                                        {msg.text}
+                                    </div>
+                                </div>
+                            ))}
+                            {isChatLoading && (
+                                <div className="flex justify-start">
+                                    <div className="bg-white border border-slate-200 px-4 py-2.5 rounded-2xl rounded-bl-md shadow-sm">
+                                        <Loader2 size={16} className="animate-spin text-indigo-500" />
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Chat Input */}
+                        <form onSubmit={handleChatSend} className="flex gap-2">
+                            <input
+                                type="text"
+                                placeholder="Ask a question..."
+                                value={chatInput}
+                                onChange={(e) => setChatInput(e.target.value)}
+                                className="flex-1 bg-white border border-slate-300 px-4 py-2.5 rounded-xl text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/40"
+                            />
+                            <button
+                                type="submit"
+                                disabled={!chatInput.trim() || isChatLoading}
+                                className="px-4 py-2.5 bg-indigo-600 text-white rounded-xl text-sm font-semibold hover:bg-indigo-700 disabled:opacity-50 transition-all"
+                            >
+                                Send
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>
