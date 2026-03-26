@@ -76,10 +76,10 @@ const UploadSection = ({ onUploadComplete }) => {
     return (
         <div className="space-y-12">
             <div className="text-center space-y-4 max-w-2xl mx-auto">
-                <h1 className="text-5xl font-extrabold tracking-tight bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400 bg-clip-text text-transparent">
+                <h1 className="text-5xl font-extrabold tracking-tight bg-gradient-to-r from-indigo-600 via-blue-600 to-indigo-800 bg-clip-text text-transparent">
                     Analyze Your Content with AI
                 </h1>
-                <p className="text-slate-400 text-lg leading-relaxed">
+                <p className="text-slate-600 text-lg leading-relaxed">
                     Upload a video, document, or paste a YouTube link to get a detailed structured analysis, key insights, and more.
                 </p>
             </div>
@@ -89,39 +89,38 @@ const UploadSection = ({ onUploadComplete }) => {
                 <div 
                     {...getRootProps()} 
                     className={`glass-card p-12 flex flex-col items-center justify-center border-dashed border-2 cursor-pointer transition-all h-[350px]
-                        ${isDragActive ? 'border-indigo-500 bg-indigo-500/10' : 'border-white/10 hover:border-white/20 hover:bg-white/[0.02]'}`}
+                        ${isDragActive ? 'border-indigo-500 bg-indigo-50' : 'border-slate-300 hover:border-indigo-400 hover:bg-slate-50'}`}
                 >
                     <input {...getInputProps()} />
-                    <div className="w-16 h-16 rounded-full bg-indigo-500/20 flex items-center justify-center mb-6">
-                        {isUploading ? <Loader2 className="animate-spin text-indigo-400" size={32} /> : <Upload className="text-indigo-400" size={32} />}
+                    <div className="w-16 h-16 rounded-full bg-indigo-100 flex items-center justify-center mb-6">
+                        {isUploading ? <Loader2 className="animate-spin text-indigo-600" size={32} /> : <Upload className="text-indigo-600" size={32} />}
                     </div>
                     {isUploading ? (
                         <div className="text-center space-y-2">
-                            <p className="font-semibold text-lg text-white">Uploading...</p>
-                            <p className="text-slate-500">{uploadProgress}% complete</p>
+                            <p className="font-semibold text-lg text-slate-800">Processing Document...</p>
+                            <p className="text-slate-500 text-sm">Our AI is analyzing. This may take up to 60 seconds.</p>
                         </div>
                     ) : (
                         <div className="text-center space-y-2">
-                            <p className="font-semibold text-xl text-white">
+                            <p className="font-semibold text-xl text-slate-800">
                                 {isDragActive ? 'Drop file to upload' : 'Drag & drop any file here'}
                             </p>
-                            <p className="text-slate-400">MP4, PDF, DOCX, TXT</p>
+                            <p className="text-slate-500">MP4, PDF, DOCX, TXT</p>
                         </div>
                     )}
                 </div>
 
-                {/* URL Input Area */}
                 <div className="glass-card p-12 h-[350px] flex flex-col justify-center gap-8 relative overflow-hidden group">
-                    <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:scale-125 transition-transform">
-                        <Youtube size={120} />
+                    <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:scale-125 transition-transform">
+                        <Youtube size={120} className="text-red-500" />
                     </div>
                     
                     <div className="space-y-2 relative z-10">
-                        <h3 className="text-2xl font-bold flex items-center gap-2 text-white">
-                            <Youtube className="text-red-500" />
+                        <h3 className="text-2xl font-bold flex items-center gap-2 text-slate-800">
+                            <Youtube className="text-red-600" />
                             YouTube Link
                         </h3>
-                        <p className="text-slate-400">Paste any public video link to analyze</p>
+                        <p className="text-slate-500">Paste any public video link to analyze</p>
                     </div>
 
                     <form onSubmit={handleUrlSubmit} className="space-y-4 relative z-10">
@@ -131,7 +130,7 @@ const UploadSection = ({ onUploadComplete }) => {
                                 placeholder="https://youtube.com/watch?v=..."
                                 value={videoUrl}
                                 onChange={(e) => setVideoUrl(e.target.value)}
-                                className="w-full bg-slate-900 border border-white/10 p-4 rounded-xl text-slate-100 placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
+                                className="w-full bg-slate-50 border border-slate-300 p-4 rounded-xl text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
                             />
                         </div>
                         <button 
@@ -151,22 +150,23 @@ const UploadSection = ({ onUploadComplete }) => {
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 opacity-60 max-w-4xl mx-auto">
-                <div className="p-4 flex flex-col items-center gap-2 text-center glass-card border-none bg-white/5">
-                    <Zap className="text-indigo-400" size={24} />
-                    <span className="text-xs uppercase tracking-widest font-bold">Fast Processing</span>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-4xl mx-auto">
+                <div className="p-4 flex flex-col items-center gap-2 text-center glass-card border flex-1 bg-white">
+                    <Zap className="text-indigo-600" size={24} />
+                    <span className="text-xs uppercase tracking-widest font-bold text-slate-600">Fast Processing</span>
                 </div>
-                <div className="p-4 flex flex-col items-center gap-2 text-center glass-card border-none bg-white/5">
-                    <FileText className="text-purple-400" size={24} />
-                    <span className="text-xs uppercase tracking-widest font-bold">PDF, DOC & More</span>
+                <div className="p-4 flex flex-col items-center gap-2 text-center glass-card border flex-1 bg-white">
+                    <FileText className="text-indigo-600" size={24} />
+                    <span className="text-xs uppercase tracking-widest font-bold text-slate-600">PDF, DOC & More</span>
                 </div>
-                <div className="p-4 flex flex-col items-center gap-2 text-center glass-card border-none bg-white/5">
-                    <div className="w-6 h-6 border-2 border-green-400/50 rounded-full flex items-center justify-center">
-                        <div className="w-2 h-2 bg-green-400 rounded-full animate-ping" />
+                <div className="p-4 flex flex-col items-center gap-2 text-center glass-card border flex-1 bg-white">
+                    <div className="w-6 h-6 border-2 border-green-500/50 rounded-full flex items-center justify-center">
+                        <div className="w-2 h-2 bg-green-500 rounded-full animate-ping" />
                     </div>
-                    <span className="text-xs uppercase tracking-widest font-bold">AI Summarization</span>
+                    <span className="text-xs uppercase tracking-widest font-bold text-slate-600">AI Summarization</span>
                 </div>
             </div>
+
         </div>
     );
 };

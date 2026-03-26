@@ -39,7 +39,6 @@ async def health():
 
 @app.post("/api/v1/process/video")
 async def process_video(
-    background_tasks: BackgroundTasks,
     video_file: UploadFile = File(None),
     video_url: str = Form(None)
 ):
@@ -65,12 +64,12 @@ async def process_video(
         "created_at": datetime.datetime.now()
     })
 
-    background_tasks.add_task(handle_video_processing, process_id, video_path, video_url)
-    return {"process_id": process_id, "message": "Video processing started"}
+    # Await processing directly because Vercel Serverless kills BackgroundTasks
+    await handle_video_processing(process_id, video_path, video_url)
+    return {"process_id": process_id, "message": "Video processing completed"}
 
 @app.post("/api/v1/process/document")
 async def process_document(
-    background_tasks: BackgroundTasks,
     doc_file: UploadFile = File(...)
 ):
     process_id = str(uuid.uuid4())
@@ -89,8 +88,9 @@ async def process_document(
         "created_at": datetime.datetime.now()
     })
 
-    background_tasks.add_task(handle_doc_processing, process_id, save_path)
-    return {"process_id": process_id, "message": "Document processing started"}
+    # Await processing directly because Vercel Serverless kills BackgroundTasks
+    await handle_doc_processing(process_id, save_path)
+    return {"process_id": process_id, "message": "Document processing completed"}
 
 @app.get("/api/v1/uploads")
 async def get_history():
