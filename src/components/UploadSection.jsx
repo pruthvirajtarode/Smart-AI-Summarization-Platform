@@ -43,6 +43,13 @@ const UploadSection = ({ onUploadComplete }) => {
             let endpoint = '';
 
             if (mode === 'file') {
+                // Check file size - Vercel limits to ~4.5MB
+                if (selectedFile.size > 4 * 1024 * 1024) {
+                    setError('File is too large (max 4MB). Please upload a smaller file.');
+                    setIsProcessing(false);
+                    return;
+                }
+
                 const isVideo = selectedFile.type.startsWith('video/');
                 if (isVideo) {
                     formData.append('video_file', selectedFile);
@@ -58,12 +65,19 @@ const UploadSection = ({ onUploadComplete }) => {
 
             const res = await axios.post(endpoint, formData, {
                 headers: { 'Content-Type': 'multipart/form-data' },
-                timeout: 120000, // 2 min timeout on client side
+                timeout: 120000,
             });
             onUploadComplete(res.data.process_id);
         } catch (err) {
             console.error('Processing failed', err);
-            setError(err?.response?.data?.detail || 'Processing failed. Please try again.');
+            const status = err?.response?.status;
+            let msg = err?.response?.data?.detail || 'Processing failed. Please try again.';
+            if (status === 413) {
+                msg = 'File is too large for processing. Please upload a file under 4MB.';
+            } else if (status === 504 || err.code === 'ECONNABORTED') {
+                msg = 'Processing timed out. Try a smaller document.';
+            }
+            setError(msg);
             setIsProcessing(false);
         }
     };
