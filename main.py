@@ -116,7 +116,7 @@ async def handle_video_processing(process_id, video_path=None, video_url=None):
         media_path = ""
         if video_url:
             # For direct URLs (S3, CDN), download the file
-            media_path = video_service.download_video_from_url(video_url)
+            media_path = video_service.download_youtube_audio(video_url)
         else:
             # Whisper API supports video files directly (mp4, mov, mkv, webm)
             media_path = video_service.extract_audio_from_video(video_path)
