@@ -1,6 +1,6 @@
 from fpdf import FPDF
 import os
-from config import settings
+from core.config import settings
 
 class ReportService:
     @staticmethod
