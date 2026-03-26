@@ -13,7 +13,9 @@ import {
     Calendar,
     Clock,
     User,
-    PlayCircle
+    PlayCircle,
+    Star,
+    Award
 } from 'lucide-react';
 import axios from 'axios';
 import { motion } from 'framer-motion';
@@ -134,7 +136,7 @@ const AnalysisResult = ({ processId, onBack }) => {
                 <div className="lg:col-span-2 space-y-6">
                     <div className="glass-card overflow-hidden">
                         <div className="flex border-b border-slate-200 bg-slate-50">
-                            {['summary', 'transcript', 'insights'].map((tab) => (
+                            {['summary', 'transcript', 'insights', 'rubrics'].map((tab) => (
                                 <button
                                     key={tab}
                                     onClick={() => setActiveTab(tab)}
@@ -214,6 +216,39 @@ const AnalysisResult = ({ processId, onBack }) => {
                                                 <p className="text-slate-700 text-sm leading-relaxed">{analysis.sentiment}</p>
                                             </div>
                                         </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {activeTab === 'rubrics' && (
+                                <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-500">
+                                    <h3 className="text-xl font-bold flex items-center gap-2 text-slate-900">
+                                        <Award className="text-amber-500" size={20} /> Evaluation Rubrics
+                                    </h3>
+                                    <div className="space-y-4">
+                                        {(analysis.evaluation_rubrics || []).map((rubric, idx) => {
+                                            const score = rubric.score || 0;
+                                            const color = score >= 8 ? 'bg-green-500' : score >= 6 ? 'bg-blue-500' : score >= 4 ? 'bg-yellow-500' : 'bg-red-500';
+                                            const textColor = score >= 8 ? 'text-green-700' : score >= 6 ? 'text-blue-700' : score >= 4 ? 'text-yellow-700' : 'text-red-700';
+                                            return (
+                                                <div key={idx} className="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
+                                                    <div className="flex items-center justify-between">
+                                                        <div className="flex items-center gap-2">
+                                                            <Star size={16} className="text-amber-400 fill-amber-400" />
+                                                            <span className="font-bold text-slate-800">{rubric.criteria}</span>
+                                                        </div>
+                                                        <span className={`text-2xl font-extrabold ${textColor}`}>{score}/10</span>
+                                                    </div>
+                                                    <div className="w-full bg-slate-200 rounded-full h-2.5">
+                                                        <div className={`${color} h-2.5 rounded-full transition-all duration-700`} style={{width: `${score * 10}%`}} />
+                                                    </div>
+                                                    <p className="text-sm text-slate-600">{rubric.justification}</p>
+                                                </div>
+                                            );
+                                        })}
+                                        {(!analysis.evaluation_rubrics || analysis.evaluation_rubrics.length === 0) && (
+                                            <p className="text-slate-500 italic">No rubrics available for this analysis. Try uploading a new document.</p>
+                                        )}
                                     </div>
                                 </div>
                             )}

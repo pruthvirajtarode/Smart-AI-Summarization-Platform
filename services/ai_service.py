@@ -28,7 +28,16 @@ class AIService:
 
 {content}
 
-Return JSON with: "summary" (150 words), "detailed_summary" (300 words), "key_points" (5 items), "topics" (5 items), "sentiment" (one line), "keywords" (10 items), "actionable_insights" (5 items). JSON only."""}
+Return JSON with:
+"summary" (150 words),
+"detailed_summary" (300 words),
+"key_points" (5 items),
+"topics" (5 items),
+"sentiment" (one line),
+"keywords" (10 items),
+"actionable_insights" (5 items),
+"evaluation_rubrics" (array of 5 objects, each with "criteria", "score" (1-10), "justification". Criteria: Clarity, Depth of Analysis, Structure & Organization, Relevance, Overall Quality).
+JSON only."""}
             ],
             response_format={"type": "json_object"},
             temperature=0.2,
