@@ -2,16 +2,18 @@
 node_modules/
 dist/
 .vercel
-.env
 
 # Python
 venv/
 __pycache__/
 *.pyc
-.env
 uploads/
 temp_audio/
 *.pdf
+
+# Secrets — DO NOT commit
+.env
+backend/.env
 
 # IDE
 .vscode/

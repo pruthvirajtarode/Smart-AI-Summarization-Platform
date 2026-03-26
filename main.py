@@ -1,12 +1,12 @@
-from fastapi import FastAPI, BackgroundTasks, UploadFile, File, Form, HTTPException, Depends
+from fastapi import FastAPI, BackgroundTasks, UploadFile, File, Form, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
-from .core.config import settings
-from .core.database import connect_to_mongo, close_mongo_connection, db
-from .services.video_service import video_service
-from .services.doc_service import doc_service
-from .services.ai_service import ai_service
-from .services.report_service import report_service
+from core.config import settings
+from core.database import connect_to_mongo, close_mongo_connection, db
+from services.video_service import video_service
+from services.doc_service import doc_service
+from services.ai_service import ai_service
+from services.report_service import report_service
 import os
 import uuid
 import datetime
@@ -33,6 +33,10 @@ async def shutdown_db_client():
 async def root():
     return {"message": "Welcome to Smart Content Analyzer API"}
 
+@app.get("/health")
+async def health():
+    return {"status": "ok"}
+
 @app.post("/api/v1/process/video")
 async def process_video(
     background_tasks: BackgroundTasks,
@@ -46,12 +50,12 @@ async def process_video(
     video_path = None
     
     if video_file:
+        os.makedirs(settings.UPLOAD_DIR, exist_ok=True)
         safe_name = f"{process_id}_{video_file.filename}"
         video_path = os.path.join(settings.UPLOAD_DIR, safe_name)
         with open(video_path, "wb") as f:
             f.write(await video_file.read())
     
-    # Store initial record
     await db.db.uploads.insert_one({
         "process_id": process_id,
         "type": "video",
@@ -71,13 +75,12 @@ async def process_document(
 ):
     process_id = str(uuid.uuid4())
     
-    # Save file
+    os.makedirs(settings.UPLOAD_DIR, exist_ok=True)
     safe_name = f"{process_id}_{doc_file.filename}"
     save_path = os.path.join(settings.UPLOAD_DIR, safe_name)
     with open(save_path, "wb") as f:
         f.write(await doc_file.read())
         
-    # Store initial record
     await db.db.uploads.insert_one({
         "process_id": process_id,
         "type": "document",
@@ -106,24 +109,19 @@ async def get_status(process_id: str):
     record["_id"] = str(record["_id"])
     return record
 
-# Helper background task functions
 async def handle_video_processing(process_id, video_path=None, video_url=None):
     try:
-        audio_path = ""
+        media_path = ""
         if video_url:
-            audio_path = video_service.download_youtube_audio(video_url)
+            # For direct URLs (S3, CDN), download the file
+            media_path = video_service.download_video_from_url(video_url)
         else:
-            # Video was already saved at video_path
-            # Extract audio
-            audio_path = video_service.extract_audio_from_video(video_path)
+            # Whisper API supports video files directly (mp4, mov, mkv, webm)
+            media_path = video_service.extract_audio_from_video(video_path)
             
-        # Transcribe
-        transcript = await ai_service.transcribe_audio(audio_path)
-        
-        # Analyze
+        transcript = await ai_service.transcribe_audio(media_path)
         analysis = await ai_service.analyze_content(transcript, "video transcript")
         
-        # Update DB
         await db.db.uploads.update_one(
             {"process_id": process_id},
             {"$set": {
@@ -133,9 +131,8 @@ async def handle_video_processing(process_id, video_path=None, video_url=None):
                 "updated_at": datetime.datetime.now()
             }}
         )
-        # Cleanup audio
-        if os.path.exists(audio_path):
-            os.remove(audio_path)
+        if media_path and os.path.exists(media_path):
+            os.remove(media_path)
             
     except Exception as e:
         print(f"Error processing video {process_id}: {e}")
@@ -146,13 +143,9 @@ async def handle_video_processing(process_id, video_path=None, video_url=None):
 
 async def handle_doc_processing(process_id, filepath):
     try:
-        # Extract text
         content = doc_service.extract_text_from_file(filepath)
-        
-        # Analyze
         analysis = await ai_service.analyze_content(content, "document")
         
-        # Update DB
         await db.db.uploads.update_one(
             {"process_id": process_id},
             {"$set": {
@@ -175,13 +168,12 @@ async def download_report(process_id: str):
     if not record or record.get("status") != "completed":
         raise HTTPException(status_code=404, detail="Analysis report not ready or not found")
     
-    filename = record.get("filename") or (record.get("video_url") if record.get("type") == "video" else "Digital Content")
-    
-    # Generate PDF
+    filename = record.get("filename") or "Content Analysis"
+    os.makedirs(settings.UPLOAD_DIR, exist_ok=True)
     pdf_path = report_service.generate_pdf_report(record["analysis"], filename, process_id)
     
     return FileResponse(
-        path=pdf_path, 
+        path=pdf_path,
         filename=f"Analysis_Report_{process_id}.pdf",
         media_type='application/pdf'
     )

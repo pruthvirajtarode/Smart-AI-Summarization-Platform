@@ -2,7 +2,6 @@ import os
 from PyPDF2 import PdfReader
 import docx
 import mammoth
-from ..core.config import settings
 
 class DocService:
     @staticmethod
@@ -16,7 +15,6 @@ class DocService:
 
     @staticmethod
     def extract_text_from_docx(filepath: str) -> str:
-        # docx parser
         doc = docx.Document(filepath)
         text = "\n".join([para.text for para in doc.paragraphs])
         return text
