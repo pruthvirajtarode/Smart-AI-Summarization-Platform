@@ -14,7 +14,8 @@ import {
     Clock,
     User,
     PlayCircle,
-    Award
+    Award,
+    Zap
 } from 'lucide-react';
 import axios from 'axios';
 import { 
