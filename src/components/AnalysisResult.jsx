@@ -247,23 +247,35 @@ const AnalysisResult = ({ processId, onBack }) => {
                             )}
 
                             {activeTab === 'summary' && (
-                                <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-500">
-                                    <div className="space-y-4">
-                                        <h3 className="text-xl font-bold flex items-center gap-2 text-white">
-                                            <FileText className="text-indigo-400" size={20} /> Overview
-                                        </h3>
-                                        <p className="text-slate-300 leading-relaxed text-lg italic border-l-4 border-indigo-500/30 pl-4 py-1">
-                                            {analysis.summary}
-                                        </p>
-                                    </div>
+                                <div className="space-y-10 animate-in fade-in slide-in-from-bottom-2 duration-500">
+                                    <div className="relative p-1 rounded-[2.5rem] bg-gradient-to-br from-indigo-500/20 via-blue-500/20 to-violet-500/20 shadow-2xl overflow-hidden group">
+                                        <div className="absolute inset-0 bg-white/40 backdrop-blur-3xl rounded-[2.5rem]" />
+                                        <div className="relative p-10 space-y-8 bg-white/60 rounded-[2.5rem] border border-white/40">
+                                            <div className="flex items-center gap-4">
+                                                <div className="w-14 h-14 rounded-2xl bg-indigo-600 flex items-center justify-center shadow-lg shadow-indigo-600/30">
+                                                    <FileText className="text-white" size={28} />
+                                                </div>
+                                                <div className="space-y-1">
+                                                    <h3 className="text-2xl font-black text-slate-900 tracking-tight">Executive Summary</h3>
+                                                    <p className="text-xs font-bold text-slate-400 uppercase tracking-widest leading-none">High-Level Analysis Overview</p>
+                                                </div>
+                                            </div>
 
-                                    <div className="space-y-4 pt-4">
-                                        <h3 className="text-xl font-bold flex items-center gap-2 text-white">
-                                            <TrendingUp className="text-purple-400" size={20} /> In-Depth Analysis
-                                        </h3>
-                                        <p className="text-slate-400 leading-relaxed whitespace-pre-wrap">
-                                            {analysis.detailed_summary}
-                                        </p>
+                                            <p className="text-xl text-slate-700 leading-relaxed font-medium italic border-l-4 border-indigo-500/40 pl-8 py-2 relative">
+                                                <span className="absolute -left-2 top-0 text-6xl text-indigo-500/10 leading-none">"</span>
+                                                {analysis.summary}
+                                            </p>
+
+                                            <div className="p-8 rounded-3xl bg-slate-50/80 border border-slate-100 flex flex-col gap-4">
+                                                <div className="flex items-center gap-2 text-indigo-500">
+                                                    <TrendingUp size={20} />
+                                                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Detailed Context</span>
+                                                </div>
+                                                <p className="text-slate-600 leading-loose text-base whitespace-pre-wrap">
+                                                    {analysis.detailed_summary}
+                                                </p>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             )}
@@ -271,10 +283,10 @@ const AnalysisResult = ({ processId, onBack }) => {
                             {activeTab === 'transcript' && (
                                 <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
                                     <div className="space-y-4">
-                                        <h3 className="text-xl font-bold flex items-center gap-2 text-white">
+                                        <h3 className="text-xl font-bold flex items-center gap-2 text-slate-900">
                                             <Mic size={20} className="text-pink-400" /> Full {type === 'video' ? 'Transcript' : 'Content'}
                                         </h3>
-                                        <div className="bg-slate-900/50 p-6 rounded-2xl border border-white/5 font-mono text-sm text-slate-400 leading-loose h-[600px] overflow-y-auto">
+                                        <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200 font-mono text-sm text-slate-600 leading-loose h-[600px] overflow-y-auto shadow-inner">
                                             {transcript || content}
                                         </div>
                                     </div>
@@ -282,29 +294,40 @@ const AnalysisResult = ({ processId, onBack }) => {
                             )}
 
                             {activeTab === 'insights' && (
-                                <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-500">
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                        <div className="space-y-4">
-                                            <h3 className="text-lg font-bold flex items-center gap-2 text-white">
-                                                <Lightbulb className="text-yellow-400" size={18} /> Actionable Insights
-                                            </h3>
-                                            <div className="space-y-3">
-                                                {analysis.actionable_insights.map((insight, idx) => (
-                                                    <div key={idx} className="flex gap-3 p-3 rounded-xl bg-white/5 border border-white/5 hover:border-white/10 transition-colors">
-                                                        <span className="w-6 h-6 rounded-full bg-indigo-500/20 text-indigo-400 flex flex-shrink-0 items-center justify-center text-xs font-bold">
+                                <div className="space-y-10 animate-in fade-in slide-in-from-bottom-2 duration-500">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                        <div className="p-8 rounded-[2.5rem] bg-white border border-slate-200 shadow-xl shadow-slate-100 space-y-8">
+                                            <div className="flex items-center gap-4">
+                                                <div className="w-12 h-12 rounded-xl bg-yellow-500 flex items-center justify-center shadow-lg shadow-yellow-500/30">
+                                                    <Lightbulb className="text-white" size={24} />
+                                                </div>
+                                                <h3 className="text-xl font-black text-slate-900">Actionable Insights</h3>
+                                            </div>
+                                            <div className="space-y-4">
+                                                {(analysis.actionable_insights || []).map((insight, idx) => (
+                                                    <div key={idx} className="flex gap-4 p-5 rounded-2xl bg-slate-50 border border-slate-100 hover:border-indigo-100 hover:bg-white transition-all group overflow-hidden relative">
+                                                        <div className="absolute top-0 left-0 w-1 h-full bg-indigo-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                                        <span className="w-8 h-8 rounded-full bg-indigo-500 text-white flex flex-shrink-0 items-center justify-center text-xs font-black shadow-md shadow-indigo-500/20">
                                                             {idx + 1}
                                                         </span>
-                                                        <span className="text-sm text-slate-300">{insight}</span>
+                                                        <span className="text-sm text-slate-700 font-medium leading-relaxed">{insight}</span>
                                                     </div>
                                                 ))}
                                             </div>
                                         </div>
-                                        <div className="space-y-4">
-                                            <h3 className="text-lg font-bold flex items-center gap-2 text-white">
-                                                <PieChart className="text-green-400" size={18} /> Key Sentiment
-                                            </h3>
-                                            <div className="p-6 rounded-2xl bg-white/5 border border-white/5 h-full">
-                                                <p className="text-slate-300 text-sm leading-relaxed">{analysis.sentiment}</p>
+
+                                        <div className="p-8 rounded-[2.5rem] bg-indigo-600 text-white border border-indigo-700 shadow-2xl shadow-indigo-600/20 space-y-8 overflow-hidden relative group">
+                                            <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl group-hover:scale-125 transition-transform duration-700" />
+                                            <div className="relative flex items-center gap-4">
+                                                <div className="w-12 h-12 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center p-2.5">
+                                                    <PieChartIcon className="text-white h-full w-full" />
+                                                </div>
+                                                <h3 className="text-xl font-black">Sentiment & Context</h3>
+                                            </div>
+                                            <div className="relative p-6 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 h-full">
+                                                <p className="text-white text-lg leading-relaxed italic border-l-2 border-white/30 pl-6 h-full">
+                                                    {analysis.sentiment}
+                                                </p>
                                             </div>
                                         </div>
                                     </div>
