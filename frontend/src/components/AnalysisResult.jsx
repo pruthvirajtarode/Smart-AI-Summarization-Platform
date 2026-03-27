@@ -61,11 +61,11 @@ const AnalysisResult = ({ processId, onBack }) => {
 
     if (loading) {
         return (
-            <div className="flex flex-col items-center justify-center min-h-[60vh] gap-6">
+            <div className="flex flex-col items-center justify-center min-h-[70vh] gap-6 bg-white rounded-[3rem] border border-slate-200 shadow-xl m-4">
                 <Loader2 className="animate-spin text-indigo-600" size={64} />
                 <div className="text-center space-y-2">
-                    <h2 className="text-2xl font-bold">Analyzing Your Content...</h2>
-                    <p className="text-slate-400">Our AI agents are working their magic. This may take a minute.</p>
+                    <h2 className="text-3xl font-black text-slate-900 tracking-tight">Processing Content</h2>
+                    <p className="text-slate-500 font-medium">Our AI agents are building your professional dashboard...</p>
                 </div>
             </div>
         );

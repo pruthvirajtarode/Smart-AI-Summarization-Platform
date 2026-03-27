@@ -61,11 +61,11 @@ const AnalysisResult = ({ processId, onBack }) => {
 
     if (loading) {
         return (
-            <div className="flex flex-col items-center justify-center min-h-[60vh] gap-6 text-white">
-                <Loader2 className="animate-spin text-indigo-500" size={64} />
+            <div className="flex flex-col items-center justify-center min-h-[70vh] gap-6 bg-white rounded-[3rem] border border-slate-200 shadow-xl m-4">
+                <Loader2 className="animate-spin text-indigo-600" size={64} />
                 <div className="text-center space-y-2">
-                    <h2 className="text-2xl font-bold">Analyzing Your Content...</h2>
-                    <p className="text-slate-400">Our AI agents are working their magic. This may take a minute.</p>
+                    <h2 className="text-3xl font-black text-slate-900 tracking-tight">Processing Content</h2>
+                    <p className="text-slate-500 font-medium">Our AI agents are building your professional dashboard...</p>
                 </div>
             </div>
         );
@@ -78,7 +78,7 @@ const AnalysisResult = ({ processId, onBack }) => {
                     <FileText className="text-red-500" size={32} />
                 </div>
                 <div>
-                    <h2 className="text-2xl font-bold text-white">Oops! Processing Failed</h2>
+                    <h2 className="text-2xl font-bold text-slate-900">Oops! Processing Failed</h2>
                     <p className="text-slate-400 max-w-md mt-2">{data?.error || "We couldn't process your request. Please try again with a different file."}</p>
                 </div>
                 <button onClick={onBack} className="secondary-button">
@@ -98,7 +98,7 @@ const AnalysisResult = ({ processId, onBack }) => {
                         <ChevronLeft size={24} />
                     </button>
                     <div>
-                        <h2 className="text-3xl font-bold text-white tracking-tight">
+                        <h2 className="text-3xl font-black text-slate-900 tracking-tight">
                             {filename || (video_url ? "YouTube Video" : "Document Analysis")}
                         </h2>
                         <div className="flex items-center gap-4 text-sm text-slate-400 mt-1">
@@ -359,7 +359,7 @@ const AnalysisResult = ({ processId, onBack }) => {
                         <div className="space-y-3">
                             <h3 className="text-sm font-bold uppercase tracking-widest text-slate-500">Topics Covered</h3>
                             <div className="flex flex-wrap gap-2">
-                                {analysis.topics.map((topic, idx) => (
+                                {(analysis.topics || []).map((topic, idx) => (
                                     <span key={idx} className="px-3 py-1.5 rounded-lg bg-indigo-500/10 text-indigo-300 text-xs font-semibold border border-indigo-500/20">
                                         {topic}
                                     </span>
@@ -370,7 +370,7 @@ const AnalysisResult = ({ processId, onBack }) => {
                         <div className="space-y-3">
                             <h3 className="text-sm font-bold uppercase tracking-widest text-slate-500">Keywords</h3>
                             <div className="flex flex-wrap gap-2">
-                                {analysis.keywords.map((kw, idx) => (
+                                {(analysis.keywords || []).map((kw, idx) => (
                                     <span key={idx} className="px-3 py-1.5 rounded-lg bg-white/5 text-slate-400 text-xs border border-white/5 hover:bg-white/10 transition-colors cursor-default">
                                         <Hash size={10} className="inline mr-1" />{kw}
                                     </span>
@@ -381,7 +381,7 @@ const AnalysisResult = ({ processId, onBack }) => {
                         <div className="space-y-3 pt-6 border-t border-white/5">
                             <h3 className="text-sm font-bold uppercase tracking-widest text-slate-500">Key Takeaways</h3>
                             <ul className="space-y-3">
-                                {analysis.key_points.map((pt, idx) => (
+                                {(analysis.key_points || []).map((pt, idx) => (
                                     <li key={idx} className="text-sm text-slate-300 flex items-start gap-3">
                                         <div className="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-1.5 flex-shrink-0" />
                                         {pt}
