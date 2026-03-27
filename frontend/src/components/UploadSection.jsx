@@ -2,6 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { Upload, Youtube, FileText, FileVideo, Loader2, Sparkles } from 'lucide-react';
 import axios from 'axios';
+import { motion } from 'framer-motion';
 
 const UploadSection = ({ onUploadComplete }) => {
     const [mode, setMode] = useState('file'); // 'file' or 'url'
