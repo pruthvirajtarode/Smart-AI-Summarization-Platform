@@ -12,11 +12,15 @@ class VideoService:
     """
 
     @staticmethod
-    def download_video_from_url(url: str) -> str:
+    def download_youtube_audio(url: str) -> str:
         """Download video from a direct URL (not YouTube)."""
         output_path = os.path.join(settings.TEMP_DIR, "video_download.mp4")
         os.makedirs(settings.TEMP_DIR, exist_ok=True)
         try:
+            # Prepend https:// if no scheme is provided
+            if url and not url.startswith(('http://', 'https://')):
+                url = 'https://' + url
+                
             headers = {"User-Agent": "Mozilla/5.0"}
             with requests.get(url, stream=True, timeout=120, headers=headers) as r:
                 r.raise_for_status()

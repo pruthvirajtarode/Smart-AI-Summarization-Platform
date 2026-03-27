@@ -59,7 +59,12 @@ const UploadSection = ({ onUploadComplete }) => {
                     endpoint = '/api/v1/process/document';
                 }
             } else {
-                formData.append('video_url', videoUrl.trim());
+                let url = videoUrl.trim();
+                // Fix: Prepend https:// if protocol is missing
+                if (url && !url.includes('://')) {
+                    url = 'https://' + url;
+                }
+                formData.append('video_url', url);
                 endpoint = '/api/v1/process/video';
             }
 

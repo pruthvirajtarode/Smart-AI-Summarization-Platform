@@ -22,6 +22,10 @@ class VideoService:
         output_path = os.path.join(settings.TEMP_DIR, "video_download.mp4")
         
         try:
+            # Prepend https:// if no scheme is provided (common user error)
+            if url and not url.startswith(('http://', 'https://')):
+                url = 'https://' + url
+                
             # Attempt direct download (works for direct video URLs like S3, etc.)
             headers = {"User-Agent": "Mozilla/5.0"}
             with requests.get(url, stream=True, timeout=60, headers=headers) as r:
