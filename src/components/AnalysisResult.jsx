@@ -143,7 +143,7 @@ const AnalysisResult = ({ processId, onBack }) => {
                             ))}
                         </div>
 
-                        <div className="p-8 min-h-[500px] prose prose-invert max-w-none">
+                        <div className="p-8 min-h-[500px] prose max-w-none">
                             {activeTab === 'rubrics' && (
                                 <div className="space-y-12 animate-in fade-in zoom-in-95 duration-700">
                                     {/* Global Score & Vision Card */}
@@ -157,22 +157,21 @@ const AnalysisResult = ({ processId, onBack }) => {
                                                 <div className="absolute inset-0 rounded-full border-[1.5rem] border-white/5 shadow-inner" />
                                                 <ResponsiveContainer width="100%" height="100%">
                                                     <PieChart>
+                                                        <defs>
+                                                            <linearGradient id="gaugeGradient" x1="0" y1="0" x2="1" y2="1">
+                                                                <stop offset="0%" stopColor="#818cf8" />
+                                                                <stop offset="100%" stopColor="#c084fc" />
+                                                            </linearGradient>
+                                                        </defs>
                                                         <Pie
                                                             data={[
-                                                                { value: (analysis.evaluation_rubrics?.reduce((acc, curr) => acc + (curr.score || 0), 0) / (analysis.evaluation_rubrics?.length || 1)) || 0, fill: 'url(#gaugeGradient)' },
-                                                                { value: 10 - ((analysis.evaluation_rubrics?.reduce((acc, curr) => acc + (curr.score || 0), 0) / (analysis.evaluation_rubrics?.length || 1)) || 0), fill: 'rgba(255,255,255,0.05)' }
+                                                                { value: ((analysis.evaluation_rubrics?.reduce((acc, curr) => acc + (curr.score || 0), 0) / (analysis.evaluation_rubrics?.length || 1)) || 0), fill: 'url(#gaugeGradient)' },
+                                                                { value: (10 - ((analysis.evaluation_rubrics?.reduce((acc, curr) => acc + (curr.score || 0), 0) / (analysis.evaluation_rubrics?.length || 1)) || 0)), fill: 'rgba(255,255,255,0.05)' }
                                                             ]}
                                                             cx="50%" cy="50%" innerRadius={90} outerRadius={110}
                                                             startAngle={225} endAngle={-45} paddingAngle={0} dataKey="value" stroke="none"
                                                             cornerRadius={20}
-                                                        >
-                                                            <defs>
-                                                                <linearGradient id="gaugeGradient" x1="0" y1="0" x2="1" y2="1">
-                                                                    <stop offset="0%" stopColor="#818cf8" />
-                                                                    <stop offset="100%" stopColor="#c084fc" />
-                                                                </linearGradient>
-                                                            </defs>
-                                                        </Pie>
+                                                        />
                                                     </PieChart>
                                                 </ResponsiveContainer>
                                                 <div className="absolute inset-0 flex flex-col items-center justify-center">
