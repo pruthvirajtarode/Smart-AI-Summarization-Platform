@@ -143,7 +143,7 @@ const AnalysisResult = ({ processId, onBack }) => {
                             ))}
                         </div>
 
-                        <div className="p-8 min-h-[500px] prose max-w-none">
+                        <div className="p-8 min-h-[500px] max-w-none">
                             {activeTab === 'rubrics' && (
                                 <div className="space-y-12 animate-in fade-in zoom-in-95 duration-700">
                                     {/* Global Score & Vision Card */}
