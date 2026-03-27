@@ -31,13 +31,7 @@ const App = () => {
     };
 
     return (
-        <div className="min-h-screen bg-slate-950 text-slate-100 selection:bg-indigo-500/40">
-            {/* Animated Glow Background */}
-            <div className="fixed inset-0 overflow-hidden pointer-events-none">
-                <div className="absolute -top-1/4 -left-1/4 w-1/2 h-1/2 bg-indigo-600/10 blur-[120px] rounded-full" />
-                <div className="absolute -bottom-1/4 -right-1/4 w-1/2 h-1/2 bg-purple-600/10 blur-[120px] rounded-full" />
-            </div>
-
+        <div className="min-h-screen bg-slate-50 text-slate-900 selection:bg-indigo-500/20">
             <Navbar currentView={view} setView={setView} />
 
             <main className="relative max-w-7xl mx-auto px-4 pt-24 pb-12">

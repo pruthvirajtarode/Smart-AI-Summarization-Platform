@@ -6,13 +6,13 @@ import { twMerge } from 'tailwind-merge';
 const Navbar = ({ currentView, setView }) => {
     return (
         <nav className="fixed top-0 inset-x-0 z-50 px-4 py-4">
-            <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-3 bg-slate-900/60 backdrop-blur-md border border-white/10 rounded-2xl shadow-2xl">
+            <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-3 bg-white/80 backdrop-blur-md border border-slate-200 rounded-2xl shadow-sm">
                 <div className="flex items-center gap-2 cursor-pointer group" onClick={() => setView('upload')}>
-                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center p-2 group-hover:scale-110 transition-transform">
+                    <div className="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center p-2 transition-transform shadow-lg shadow-indigo-600/20">
                         <Zap className="text-white fill-white" />
                     </div>
-                    <span className="text-lg font-bold tracking-tight text-white/90">
-                        Smart <span className="text-indigo-400">Analyzer</span>
+                    <span className="text-xl font-black tracking-tight text-slate-900 uppercase">
+                        Smart<span className="text-indigo-600">Analyzer</span>
                     </span>
                 </div>
 
@@ -20,8 +20,8 @@ const Navbar = ({ currentView, setView }) => {
                     <button
                         onClick={() => setView('upload')}
                         className={twMerge(
-                            "flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all hover:bg-white/5",
-                            currentView === 'upload' ? "bg-white/10 text-indigo-400 border border-indigo-500/20 shadow-[0_0_15px_-5px_#6366f1]" : "text-slate-400"
+                            "flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all hover:bg-slate-100",
+                            currentView === 'upload' ? "bg-indigo-50 text-indigo-700 border border-indigo-200 shadow-sm" : "text-slate-500"
                         )}
                     >
                         <UploadCloud size={18} />
@@ -30,8 +30,8 @@ const Navbar = ({ currentView, setView }) => {
                     <button
                         onClick={() => setView('history')}
                         className={twMerge(
-                            "flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all hover:bg-white/5",
-                            currentView === 'history' ? "bg-white/10 text-indigo-400 border border-indigo-500/20 shadow-[0_0_15px_-5px_#6366f1]" : "text-slate-400"
+                            "flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all hover:bg-slate-100",
+                            currentView === 'history' ? "bg-indigo-50 text-indigo-700 border border-indigo-200 shadow-sm" : "text-slate-500"
                         )}
                     >
                         <History size={18} />
