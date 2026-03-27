@@ -19,7 +19,11 @@ const UploadSection = ({ onUploadComplete }) => {
         onDrop,
         multiple: false,
         accept: {
-            'video/*': ['.mp4', '.mkv', '.mov'],
+            'video/mp4': ['.mp4'],
+            'audio/mpeg': ['.mp3'],
+            'audio/m4a': ['.m4a'],
+            'audio/wav': ['.wav'],
+            'audio/webm': ['.webm'],
             'application/pdf': ['.pdf'],
             'application/vnd.openxmlformats-officedocument.wordprocessingml.document': ['.docx'],
             'text/plain': ['.txt']
@@ -175,11 +179,21 @@ const UploadSection = ({ onUploadComplete }) => {
                     </div>
                 )}
 
-                {/* Error Message */}
+                {/* Professional Error Message */}
                 {error && (
-                    <div className="w-full bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-sm text-red-600 font-medium">
-                        {error}
-                    </div>
+                    <motion.div 
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        className="w-full bg-rose-50 border border-rose-100 rounded-2xl px-6 py-4 flex items-start gap-4"
+                    >
+                        <div className="w-8 h-8 rounded-full bg-rose-100 flex items-center justify-center flex-shrink-0">
+                            <span className="text-xl font-bold text-rose-600">!</span>
+                        </div>
+                        <div className="space-y-1">
+                            <p className="text-sm font-bold text-rose-900 leading-none">Action Required</p>
+                            <p className="text-xs text-rose-600 font-medium">{error}</p>
+                        </div>
+                    </motion.div>
                 )}
 
                 {/* Single Centered Analyze Button */}
@@ -204,9 +218,18 @@ const UploadSection = ({ onUploadComplete }) => {
                 </button>
 
                 {isProcessing && (
-                    <p className="text-xs text-slate-400 text-center">
-                        Our AI is summarizing your content. This may take up to 60 seconds — please don't close the tab.
-                    </p>
+                    <div className="space-y-4 w-full">
+                        <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
+                            <motion.div 
+                                animate={{ x: ['-100%', '100%'] }} 
+                                transition={{ repeat: Infinity, duration: 1.5 }}
+                                className="h-full w-1/3 bg-indigo-600 rounded-full shadow-lg shadow-indigo-600/30"
+                            />
+                        </div>
+                        <p className="text-[10px] text-slate-400 text-center font-bold uppercase tracking-widest leading-relaxed">
+                            AI Processing Active • Max 4MB (Vercel Limit) • Please stay on this page
+                        </p>
+                    </div>
                 )}
             </div>
 

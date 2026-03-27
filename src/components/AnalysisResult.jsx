@@ -146,61 +146,51 @@ const AnalysisResult = ({ processId, onBack }) => {
 
                         <div className="p-8 min-h-[500px] max-w-none">
                             {activeTab === 'rubrics' && (
-                                <div className="space-y-12 animate-in fade-in zoom-in-95 duration-700">
-                                    {/* Global Score & Vision Card */}
-                                    <div className="relative p-10 rounded-[3rem] bg-slate-900 shadow-2xl overflow-hidden group">
-                                        <div className="absolute top-0 right-0 w-[50%] h-[150%] bg-gradient-to-l from-indigo-500/20 via-transparent to-transparent -rotate-12 translate-x-12" />
-                                        <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-indigo-600/10 rounded-full blur-[100px] group-hover:bg-indigo-600/20 transition-all duration-1000" />
-                                        
-                                        <div className="relative flex flex-col lg:flex-row items-center gap-16">
-                                            {/* Advanced Circle Gauge */}
-                                            <div className="relative w-72 h-72 flex-shrink-0">
-                                                <div className="absolute inset-0 rounded-full border-[1.5rem] border-white/5 shadow-inner" />
-                                                <ResponsiveContainer width="100%" height="100%">
-                                                    <PieChart>
-                                                        <defs>
-                                                            <linearGradient id="gaugeGradient" x1="0" y1="0" x2="1" y2="1">
-                                                                <stop offset="0%" stopColor="#818cf8" />
-                                                                <stop offset="100%" stopColor="#c084fc" />
-                                                            </linearGradient>
-                                                        </defs>
-                                                        <Pie
-                                                            data={[
-                                                                { value: ((analysis.evaluation_rubrics?.reduce((acc, curr) => acc + (curr.score || 0), 0) / (analysis.evaluation_rubrics?.length || 1)) || 0), fill: 'url(#gaugeGradient)' },
-                                                                { value: (10 - ((analysis.evaluation_rubrics?.reduce((acc, curr) => acc + (curr.score || 0), 0) / (analysis.evaluation_rubrics?.length || 1)) || 0)), fill: 'rgba(255,255,255,0.05)' }
-                                                            ]}
-                                                            cx="50%" cy="50%" innerRadius={90} outerRadius={110}
-                                                            startAngle={225} endAngle={-45} paddingAngle={0} dataKey="value" stroke="none"
-                                                            cornerRadius={20}
-                                                        />
-                                                    </PieChart>
-                                                </ResponsiveContainer>
-                                                <div className="absolute inset-0 flex flex-col items-center justify-center">
-                                                    <motion.span 
-                                                        initial={{ scale: 0.5, opacity: 0 }}
-                                                        animate={{ scale: 1, opacity: 1 }}
-                                                        className="text-8xl font-black text-transparent bg-clip-text bg-gradient-to-br from-white to-white/40 leading-none drop-shadow-2xl"
-                                                    >
-                                                        {((analysis.evaluation_rubrics?.reduce((acc, curr) => acc + (curr.score || 0), 0) / (analysis.evaluation_rubrics?.length || 1)) || 0).toFixed(1)}
-                                                    </motion.span>
-                                                    <div className="mt-2 px-6 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/10">
-                                                        <span className="text-[10px] font-black uppercase tracking-[0.4em] text-indigo-400">Total Score</span>
+                                <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-700">
+                                    {/* Professional Score Card */}
+                                    <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+                                        <div className="flex flex-col lg:flex-row divide-y lg:divide-y-0 lg:divide-x divide-slate-100">
+                                            {/* Overall Gauge */}
+                                            <div className="p-10 flex flex-col items-center justify-center bg-slate-50/50 min-w-[320px]">
+                                                <h4 className="text-xs font-bold text-slate-400 uppercase tracking-[0.2em] mb-8">Quality Score</h4>
+                                                <div className="relative w-56 h-56">
+                                                    <ResponsiveContainer width="100%" height="100%">
+                                                        <PieChart>
+                                                            <Pie
+                                                                data={[
+                                                                    { value: ((analysis.evaluation_rubrics?.reduce((acc, curr) => acc + (curr.score || 0), 0) / (analysis.evaluation_rubrics?.length || 1)) || 0), fill: '#4f46e5' },
+                                                                    { value: (10 - ((analysis.evaluation_rubrics?.reduce((acc, curr) => acc + (curr.score || 0), 0) / (analysis.evaluation_rubrics?.length || 1)) || 0)), fill: '#f1f5f9' }
+                                                                ]}
+                                                                cx="50%" cy="50%" innerRadius={70} outerRadius={85}
+                                                                startAngle={225} endAngle={-45} paddingAngle={0} dataKey="value" stroke="none"
+                                                                cornerRadius={10}
+                                                            />
+                                                        </PieChart>
+                                                    </ResponsiveContainer>
+                                                    <div className="absolute inset-0 flex flex-col items-center justify-center">
+                                                        <span className="text-6xl font-black text-slate-900 tabular-nums">
+                                                            {((analysis.evaluation_rubrics?.reduce((acc, curr) => acc + (curr.score || 0), 0) / (analysis.evaluation_rubrics?.length || 1)) || 0).toFixed(1)}
+                                                        </span>
+                                                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">out of 10</span>
                                                     </div>
+                                                </div>
+                                                <div className="mt-8 px-4 py-1 rounded-full bg-indigo-50 text-indigo-600 text-[10px] font-black uppercase tracking-widest border border-indigo-100">
+                                                    High Performance
                                                 </div>
                                             </div>
 
-                                            {/* Feature Vision / Radar */}
-                                            <div className="flex-1 space-y-6 w-full">
-                                                <div className="space-y-2">
-                                                    <h3 className="text-4xl font-black text-white tracking-tight">Performance Breakdown</h3>
-                                                    <p className="text-slate-400 font-medium">Multi-dimensional analysis of content quality and depth.</p>
+                                            {/* Radar Breakdown */}
+                                            <div className="flex-1 p-10 space-y-6">
+                                                <div className="flex items-center justify-between">
+                                                    <h3 className="text-xl font-bold text-slate-900">Performance Matrix</h3>
+                                                    <span className="px-3 py-1 bg-slate-100 text-slate-500 text-[10px] font-bold rounded-lg uppercase tracking-wider">AI Evaluation</span>
                                                 </div>
-                                                <div className="h-64 w-full bg-white/[0.02] border border-white/5 rounded-3xl p-4 backdrop-blur-sm">
+                                                <div className="h-[300px] w-full">
                                                     <ResponsiveContainer width="100%" height="100%">
                                                         <RadarChart cx="50%" cy="50%" outerRadius="80%" data={(analysis.evaluation_rubrics || []).map(r => ({ subject: r.criteria, A: r.score, fullMark: 10 }))}>
-                                                            <PolarGrid stroke="rgba(255,255,255,0.05)" />
-                                                            <PolarAngleAxis dataKey="subject" tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 10, fontWeight: 700 }} />
-                                                            <Radar name="Score" dataKey="A" stroke="#818cf8" strokeWidth={3} fill="#818cf8" fillOpacity={0.2} animationDuration={1500} />
+                                                            <PolarGrid stroke="#e2e8f0" />
+                                                            <PolarAngleAxis dataKey="subject" tick={{ fill: '#64748b', fontSize: 10, fontWeight: 600 }} />
+                                                            <Radar name="Score" dataKey="A" stroke="#4f46e5" strokeWidth={2} fill="#4f46e5" fillOpacity={0.1} />
                                                         </RadarChart>
                                                     </ResponsiveContainer>
                                                 </div>
@@ -208,120 +198,99 @@ const AnalysisResult = ({ processId, onBack }) => {
                                         </div>
                                     </div>
 
-                                    {/* Detailed Metrics Grid */}
-                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                                    {/* Clean Metrics Grid */}
+                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                         {(analysis.evaluation_rubrics || []).map((rubric, idx) => {
                                             const score = rubric.score || 0;
-                                            const isExcellent = score >= 8;
-                                            const isGood = score >= 6;
-                                            
-                                            // Dynamic Colors for Neon Effect
-                                            const primaryColor = isExcellent ? '#10b981' : isGood ? '#6366f1' : '#f43f5e';
-                                            const bgColor = isExcellent ? 'from-emerald-500/10' : isGood ? 'from-indigo-500/10' : 'from-rose-500/10';
+                                            const colorClass = score >= 8 ? 'text-emerald-600' : score >= 6 ? 'text-indigo-600' : 'text-rose-600';
+                                            const barClass = score >= 8 ? 'bg-emerald-500' : score >= 6 ? 'bg-indigo-500' : 'bg-rose-500';
 
                                             return (
                                                 <motion.div 
                                                     key={idx}
-                                                    initial={{ y: 20, opacity: 0 }}
-                                                    animate={{ y: 0, opacity: 1 }}
-                                                    transition={{ delay: idx * 0.1 }}
-                                                    className={`group relative p-8 rounded-[2rem] border border-white/10 bg-gradient-to-br ${bgColor} to-slate-900 hover:scale-[1.02] transition-all duration-500 overflow-hidden text-slate-100`}
+                                                    initial={{ opacity: 0, y: 10 }}
+                                                    animate={{ opacity: 1, y: 0 }}
+                                                    transition={{ delay: idx * 0.05 }}
+                                                    className="p-8 bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow group"
                                                 >
-                                                    <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-125 transition-transform">
-                                                        <Award size={64} style={{ color: primaryColor }} />
+                                                    <div className="flex items-start justify-between mb-6">
+                                                        <div className="space-y-1">
+                                                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Metric {idx+1}</span>
+                                                            <h5 className="font-bold text-slate-800 text-lg leading-tight group-hover:text-indigo-600 transition-colors uppercase tracking-tight">{rubric.criteria}</h5>
+                                                        </div>
+                                                        <div className="text-3xl font-black text-slate-900 bg-slate-50 w-12 h-12 flex items-center justify-center rounded-xl border border-slate-100">
+                                                            {score}
+                                                        </div>
                                                     </div>
 
-                                                    <div className="relative space-y-6">
-                                                        <div className="flex items-center justify-between">
-                                                            <div className="space-y-1">
-                                                                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Metric {idx + 1}</span>
-                                                                <h4 className="text-xl font-black tracking-tight">{rubric.criteria}</h4>
-                                                            </div>
-                                                            <div className="w-14 h-14 rounded-2xl flex items-center justify-center bg-white/5 border border-white/10 shadow-lg">
-                                                                <span className="text-2xl font-black" style={{ color: primaryColor }}>{score}</span>
-                                                            </div>
+                                                    <div className="space-y-3 mb-6">
+                                                        <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
+                                                            <motion.div 
+                                                                initial={{ width: 0 }}
+                                                                animate={{ width: `${score * 10}%` }}
+                                                                transition={{ duration: 1, delay: 0.3 }}
+                                                                className={`h-full rounded-full ${barClass}`}
+                                                            />
                                                         </div>
-
-                                                        <div className="space-y-2">
-                                                            <div className="flex justify-between text-[10px] font-bold uppercase tracking-widest text-slate-500">
-                                                                <span>Efficiency Path</span>
-                                                                <span>{score * 10}% Accurate</span>
-                                                            </div>
-                                                            <div className="h-4 w-full bg-white/5 rounded-full p-1 overflow-hidden">
-                                                                <motion.div 
-                                                                    initial={{ width: 0 }}
-                                                                    animate={{ width: `${score * 10}%` }}
-                                                                    transition={{ duration: 1, delay: 0.5 }}
-                                                                    className="h-full rounded-full shadow-[0_0_15px_rgba(0,0,0,0.5)] flex items-center justify-end px-2"
-                                                                    style={{ 
-                                                                        background: `linear-gradient(90deg, transparent, ${primaryColor})`,
-                                                                        boxShadow: `0 0 10px ${primaryColor}40`
-                                                                    }}
-                                                                >
-                                                                    <div className="w-1 h-1 rounded-full bg-white animate-ping" />
-                                                                </motion.div>
-                                                            </div>
+                                                        <div className="flex justify-between text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                                                            <span>Poor</span>
+                                                            <span className={colorClass}>Target</span>
                                                         </div>
-
-                                                        <p className="text-sm text-slate-400 leading-relaxed italic group-hover:text-slate-300 transition-colors">
-                                                            "{rubric.justification}"
-                                                        </p>
                                                     </div>
+
+                                                    <p className="text-sm text-slate-500 leading-relaxed font-medium">
+                                                        {rubric.justification}
+                                                    </p>
                                                 </motion.div>
                                             );
                                         })}
-                                        {(!analysis.evaluation_rubrics || analysis.evaluation_rubrics.length === 0) && (
-                                            <p className="text-slate-500 italic col-span-full text-center p-20 bg-slate-50 rounded-[3rem] border border-dashed border-slate-300">
-                                                No evaluation data available. Our AI engine is currently analyzing the content structure.
-                                            </p>
-                                        )}
                                     </div>
 
-                                    {/* Quick Summary Prompt */}
-                                    <div className="p-8 rounded-[2rem] bg-indigo-600 shadow-2xl shadow-indigo-600/20 text-white flex flex-col md:flex-row items-center gap-8 border border-white/10">
-                                        <div className="w-20 h-20 rounded-[2rem] bg-white/20 backdrop-blur-md flex items-center justify-center">
-                                            <Zap size={40} className="fill-white" />
+                                    {/* Action Banner */}
+                                    <div className="bg-slate-900 rounded-[2rem] p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl">
+                                        <div className="flex items-center gap-6">
+                                            <div className="w-16 h-16 rounded-2xl bg-white/10 flex items-center justify-center flex-shrink-0">
+                                                <Award size={32} className="text-indigo-400" />
+                                            </div>
+                                            <div className="space-y-1">
+                                                <h4 className="text-white text-xl font-bold">Comprehensive Analysis Complete</h4>
+                                                <p className="text-slate-400 text-sm">Download the professional report to share your insights.</p>
+                                            </div>
                                         </div>
-                                        <div className="flex-1 space-y-2 text-center md:text-left">
-                                            <h4 className="text-2xl font-black">Ready to scale this analysis?</h4>
-                                            <p className="text-indigo-100/80 font-medium">Export this report with all diagrams included for your professional presentation.</p>
-                                        </div>
-                                        <button className="px-8 py-4 bg-white text-indigo-600 rounded-[1.5rem] font-black uppercase tracking-widest hover:scale-105 transition-all shadow-xl shadow-black/10">
-                                            Scale Deployment
+                                        <button 
+                                            onClick={() => window.open(`/api/v1/download/${processId}`, '_blank')}
+                                            className="px-8 py-4 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-500 active:scale-95 transition-all w-full md:w-auto flex items-center justify-center gap-2"
+                                        >
+                                            <Download size={20} /> Export Executive PDF
                                         </button>
                                     </div>
                                 </div>
                             )}
 
                             {activeTab === 'summary' && (
-                                <div className="space-y-10 animate-in fade-in slide-in-from-bottom-2 duration-500">
-                                    <div className="relative p-1 rounded-[2.5rem] bg-gradient-to-br from-indigo-500/20 via-blue-500/20 to-violet-500/20 shadow-2xl overflow-hidden group">
-                                        <div className="absolute inset-0 bg-white/40 backdrop-blur-3xl rounded-[2.5rem]" />
-                                        <div className="relative p-10 space-y-8 bg-white/60 rounded-[2.5rem] border border-white/40">
-                                            <div className="flex items-center gap-4">
-                                                <div className="w-14 h-14 rounded-2xl bg-indigo-600 flex items-center justify-center shadow-lg shadow-indigo-600/30">
-                                                    <FileText className="text-white" size={28} />
-                                                </div>
-                                                <div className="space-y-1">
-                                                    <h3 className="text-2xl font-black text-slate-900 tracking-tight">Executive Summary</h3>
-                                                    <p className="text-xs font-bold text-slate-400 uppercase tracking-widest leading-none">High-Level Analysis Overview</p>
-                                                </div>
+                                <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-500">
+                                    <div className="bg-white rounded-3xl border border-slate-200 shadow-sm p-10 space-y-8">
+                                        <div className="flex items-center gap-4 border-b border-slate-100 pb-8">
+                                            <div className="w-14 h-14 rounded-2xl bg-indigo-50 flex items-center justify-center border border-indigo-100 shadow-inner">
+                                                <FileText className="text-indigo-600" size={28} />
                                             </div>
+                                            <div className="space-y-1">
+                                                <h3 className="text-2xl font-black text-slate-900 tracking-tight">Executive Summary</h3>
+                                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">High-Level Analysis Overview</p>
+                                            </div>
+                                        </div>
 
-                                            <p className="text-xl text-slate-700 leading-relaxed font-medium italic border-l-4 border-indigo-500/40 pl-8 py-2 relative">
-                                                <span className="absolute -left-2 top-0 text-6xl text-indigo-500/10 leading-none">"</span>
-                                                {analysis.summary}
+                                        <p className="text-xl text-slate-700 leading-relaxed font-semibold italic pl-8 border-l-4 border-indigo-500/20">
+                                            {analysis.summary}
+                                        </p>
+
+                                        <div className="p-8 rounded-2xl bg-slate-50 border border-slate-100">
+                                            <h4 className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                                                <TrendingUp size={16} /> Technical Details
+                                            </h4>
+                                            <p className="text-slate-600 leading-loose text-base whitespace-pre-wrap">
+                                                {analysis.detailed_summary}
                                             </p>
-
-                                            <div className="p-8 rounded-3xl bg-slate-50/80 border border-slate-100 flex flex-col gap-4">
-                                                <div className="flex items-center gap-2 text-indigo-500">
-                                                    <TrendingUp size={20} />
-                                                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Detailed Context</span>
-                                                </div>
-                                                <p className="text-slate-600 leading-loose text-base whitespace-pre-wrap">
-                                                    {analysis.detailed_summary}
-                                                </p>
-                                            </div>
                                         </div>
                                     </div>
                                 </div>
