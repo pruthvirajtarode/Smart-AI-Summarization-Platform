@@ -159,8 +159,8 @@ const AnalysisResult = ({ processId, onBack }) => {
                                                     <PieChart>
                                                         <Pie
                                                             data={[
-                                                                { value: (analysis.evaluation_rubrics.reduce((acc, curr) => acc + (curr.score || 0), 0) / analysis.evaluation_rubrics.length) || 0, fill: 'url(#gaugeGradient)' },
-                                                                { value: 10 - ((analysis.evaluation_rubrics.reduce((acc, curr) => acc + (curr.score || 0), 0) / analysis.evaluation_rubrics.length) || 0), fill: 'rgba(255,255,255,0.05)' }
+                                                                { value: (analysis.evaluation_rubrics?.reduce((acc, curr) => acc + (curr.score || 0), 0) / (analysis.evaluation_rubrics?.length || 1)) || 0, fill: 'url(#gaugeGradient)' },
+                                                                { value: 10 - ((analysis.evaluation_rubrics?.reduce((acc, curr) => acc + (curr.score || 0), 0) / (analysis.evaluation_rubrics?.length || 1)) || 0), fill: 'rgba(255,255,255,0.05)' }
                                                             ]}
                                                             cx="50%" cy="50%" innerRadius={90} outerRadius={110}
                                                             startAngle={225} endAngle={-45} paddingAngle={0} dataKey="value" stroke="none"
@@ -181,7 +181,7 @@ const AnalysisResult = ({ processId, onBack }) => {
                                                         animate={{ scale: 1, opacity: 1 }}
                                                         className="text-8xl font-black text-transparent bg-clip-text bg-gradient-to-br from-white to-white/40 leading-none drop-shadow-2xl"
                                                     >
-                                                        {((analysis.evaluation_rubrics.reduce((acc, curr) => acc + (curr.score || 0), 0) / analysis.evaluation_rubrics.length) || 0).toFixed(1)}
+                                                        {((analysis.evaluation_rubrics?.reduce((acc, curr) => acc + (curr.score || 0), 0) / (analysis.evaluation_rubrics?.length || 1)) || 0).toFixed(1)}
                                                     </motion.span>
                                                     <div className="mt-2 px-6 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/10">
                                                         <span className="text-[10px] font-black uppercase tracking-[0.4em] text-indigo-400">Total Score</span>
@@ -197,7 +197,7 @@ const AnalysisResult = ({ processId, onBack }) => {
                                                 </div>
                                                 <div className="h-64 w-full bg-white/[0.02] border border-white/5 rounded-3xl p-4 backdrop-blur-sm">
                                                     <ResponsiveContainer width="100%" height="100%">
-                                                        <RadarChart cx="50%" cy="50%" outerRadius="80%" data={analysis.evaluation_rubrics.map(r => ({ subject: r.criteria, A: r.score, fullMark: 10 }))}>
+                                                        <RadarChart cx="50%" cy="50%" outerRadius="80%" data={(analysis.evaluation_rubrics || []).map(r => ({ subject: r.criteria, A: r.score, fullMark: 10 }))}>
                                                             <PolarGrid stroke="rgba(255,255,255,0.05)" />
                                                             <PolarAngleAxis dataKey="subject" tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 10, fontWeight: 700 }} />
                                                             <Radar name="Score" dataKey="A" stroke="#818cf8" strokeWidth={3} fill="#818cf8" fillOpacity={0.2} animationDuration={1500} />
