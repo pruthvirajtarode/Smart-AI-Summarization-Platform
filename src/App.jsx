@@ -1,84 +1,46 @@
-import React, { useState, useEffect } from 'react';
-import Navbar from './components/Navbar';
-import UploadSection from './components/UploadSection';
-import HistoryPanel from './components/HistoryPanel';
-import AnalysisResult from './components/AnalysisResult';
-import axios from 'axios';
-import { motion, AnimatePresence } from 'framer-motion';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import DashboardLayout from './components/layout/DashboardLayout';
+import Home from './pages/Home';
+import AnalysisResult from './pages/AnalysisResult';
 
-const App = () => {
-    const [history, setHistory] = useState([]);
-    const [currentProcess, setCurrentProcess] = useState(null);
-    const [view, setView] = useState('upload'); // upload, result, history
+function App() {
+  return (
+    <Router>
+      <DashboardLayout>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/result/:id" element={<AnalysisResult />} />
+          <Route path="/history" element={<HistoryPage />} />
+          <Route path="/settings" element={<SettingsPage />} />
+        </Routes>
+      </DashboardLayout>
+    </Router>
+  );
+}
 
-    const fetchHistory = async () => {
-        try {
-            const res = await axios.get('/api/v1/uploads');
-            setHistory(res.data);
-        } catch (err) {
-            console.error("Failed to fetch history", err);
-        }
-    };
+// Simple placeholders for other pages
+const HistoryPage = () => (
+    <div className="glass p-8 rounded-3xl">
+        <h2 className="text-xl font-bold mb-4">Analysis History</h2>
+        <p className="text-slate-400 italic">History records will appear here as you analyze more videos.</p>
+    </div>
+);
 
-    useEffect(() => {
-        fetchHistory();
-    }, []);
-
-    const handleUploadComplete = (processId) => {
-        setCurrentProcess(processId);
-        setView('result');
-        fetchHistory();
-    };
-
-    return (
-        <div className="min-h-screen bg-slate-50 text-slate-900 selection:bg-indigo-500/20">
-            <Navbar currentView={view} setView={setView} />
-
-            <main className="relative max-w-7xl mx-auto px-4 pt-24 pb-12">
-                <AnimatePresence mode="wait">
-                    {view === 'upload' && (
-                        <motion.div
-                            key="upload"
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -20 }}
-                        >
-                            <UploadSection onUploadComplete={handleUploadComplete} />
-                        </motion.div>
-                    )}
-
-                    {view === 'result' && (
-                        <motion.div
-                            key="result"
-                            initial={{ opacity: 0, scale: 0.95 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 0.95 }}
-                        >
-                            <AnalysisResult processId={currentProcess} onBack={() => setView('upload')} />
-                        </motion.div>
-                    )}
-
-                    {view === 'history' && (
-                        <motion.div
-                            key="history"
-                            initial={{ opacity: 0, x: 20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            exit={{ opacity: 0, x: -20 }}
-                        >
-                            <HistoryPanel items={history} onSelect={(id) => {
-                                setCurrentProcess(id);
-                                setView('result');
-                            }} />
-                        </motion.div>
-                    )}
-                </AnimatePresence>
-            </main>
-
-            <footer className="relative mt-auto border-t border-white/5 py-8 text-center text-slate-500 text-sm">
-                &copy; {new Date().getFullYear()} Smart Content Analyzer. Built with GPT-4o & Whisper.
-            </footer>
+const SettingsPage = () => (
+    <div className="glass p-8 rounded-3xl">
+        <h2 className="text-xl font-bold mb-4">Settings</h2>
+        <div className="space-y-6">
+            <div className="p-4 bg-white/5 rounded-xl border border-white/5">
+                <h3 className="font-medium">API Configuration</h3>
+                <p className="text-sm text-slate-500 mt-1">OpenAI API Key is managed via backend environment variables.</p>
+            </div>
+            <div className="p-4 bg-white/5 rounded-xl border border-white/5">
+                <h3 className="font-medium">Account Preferences</h3>
+                <p className="text-sm text-slate-500 mt-1">Manage your notification and display preferences.</p>
+            </div>
         </div>
-    );
-};
+    </div>
+);
 
 export default App;
