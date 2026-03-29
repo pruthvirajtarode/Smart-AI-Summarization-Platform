@@ -27,7 +27,7 @@ const Home = () => {
     const pollStatus = async (id) => {
         const interval = setInterval(async () => {
             try {
-                const res = await axios.get(`http://localhost:8000/api/analyze/status/${id}`);
+                const res = await axios.get(`/api/analyze/status/${id}`);
                 const data = res.data;
                 setProgress(data.progress);
                 setMsg(data.message || "Processing...");
@@ -56,9 +56,9 @@ const Home = () => {
             if (file) {
                 const formData = new FormData();
                 formData.append('file', file);
-                res = await axios.post('http://localhost:8000/api/analyze/upload', formData);
+                res = await axios.post('/api/analyze/upload', formData);
             } else {
-                res = await axios.post('http://localhost:8000/api/analyze/url', { url });
+                res = await axios.post('/api/analyze/url', { url });
             }
             
             const id = res.data.job_id;
@@ -140,21 +140,27 @@ const Home = () => {
                     </button>
                 </div>
                 
-                {loading && (
-                    <div className="glass p-6 rounded-3xl space-y-4 animate-in fade-in slide-in-from-bottom-4">
+                {(loading || msg) && (
+                    <div className="glass p-6 rounded-3xl space-y-4 animate-in fade-in slide-in-from-bottom-4 border-l-4 border-l-indigo-500">
                         <div className="flex justify-between items-center">
                             <div className="flex items-center gap-3">
-                                <Loader2 className="w-4 h-4 text-indigo-400 animate-spin" />
-                                <span className="text-sm font-medium text-slate-300">{msg}</span>
+                                {loading ? (
+                                    <Loader2 className="w-4 h-4 text-indigo-400 animate-spin" />
+                                ) : (
+                                    <AlertCircle className="w-4 h-4 text-amber-500" />
+                                )}
+                                <span className={`text-sm font-medium ${loading ? 'text-slate-300' : 'text-amber-500'}`}>{msg}</span>
                             </div>
-                            <span className="text-xs font-mono text-indigo-400">{progress}%</span>
+                            {loading && <span className="text-xs font-mono text-indigo-400">{progress}%</span>}
                         </div>
-                        <div className="h-2 bg-slate-900 rounded-full overflow-hidden">
-                            <div 
-                                className="h-full bg-indigo-500 transition-all duration-500 ease-out shadow-[0_0_10px_rgba(99,102,241,0.5)]" 
-                                style={{ width: `${progress}%` }} 
-                            />
-                        </div>
+                        {loading && (
+                            <div className="h-2 bg-slate-900 rounded-full overflow-hidden">
+                                <div 
+                                    className="h-full bg-indigo-500 transition-all duration-500 ease-out shadow-[0_0_10px_rgba(99,102,241,0.5)]" 
+                                    style={{ width: `${progress}%` }} 
+                                />
+                            </div>
+                        )}
                     </div>
                 )}
             </div>

@@ -22,7 +22,7 @@ const AnalysisResult = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const res = await axios.get(`http://localhost:8000/api/analyze/result/${id}`);
+                const res = await axios.get(`/api/analyze/result/${id}`);
                 setData(res.data);
                 setLoading(false);
             } catch (err) {

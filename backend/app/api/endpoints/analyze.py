@@ -4,9 +4,9 @@ from pydantic import BaseModel
 from typing import Optional
 import os
 import shutil
-from app.services.video_service import VideoService
-from app.services.ai_service import AIService
-from app.core.config import settings
+from backend.app.services.video_service import VideoService
+from backend.app.services.ai_service import AIService
+from backend.app.core.config import settings
 
 router = APIRouter()
 

@@ -2,7 +2,7 @@ import json
 from openai import AsyncOpenAI
 import os
 from typing import Dict, Any
-from app.core.config import settings
+from backend.app.core.config import settings
 
 class AIService:
     def __init__(self):

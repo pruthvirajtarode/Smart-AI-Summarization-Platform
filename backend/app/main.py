@@ -1,8 +1,8 @@
 import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.api.api import api_router
-from app.core.config import settings
+from backend.app.api.api import api_router
+from backend.app.core.config import settings
 import motor.motor_asyncio
 
 app = FastAPI(title=settings.PROJECT_NAME)
