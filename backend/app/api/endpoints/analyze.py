@@ -4,6 +4,7 @@ from pydantic import BaseModel
 from typing import Optional
 import os
 import shutil
+import datetime
 from backend.app.services.video_service import VideoService
 from backend.app.services.ai_service import AIService
 from backend.app.core.config import settings
@@ -32,7 +33,8 @@ async def upload_video(
         "status": "processing",
         "progress": 0,
         "filename": file.filename,
-        "type": "file"
+        "type": "file",
+        "created_at": datetime.datetime.utcnow()
     })
     
     # Start background processing
@@ -54,13 +56,15 @@ async def process_url(
     job_id = str(uuid.uuid4())
     url = payload.url
     
+    # Initialize status in DB
     db = request.app.mongodb
     await db.jobs.insert_one({
         "job_id": job_id,
         "status": "processing",
         "progress": 0,
         "url": url,
-        "type": "url"
+        "type": "url",
+        "created_at": datetime.datetime.utcnow()
     })
     
     # Start background processing
