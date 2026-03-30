@@ -42,14 +42,7 @@ class VideoService:
             
             if process.returncode != 0:
                 print(f"FFmpeg error: {stderr.decode()}")
-                # If FFmpeg fails, try moviepy as fallback
-                try:
-                    from moviepy.editor import VideoFileClip
-                    video = VideoFileClip(video_path)
-                    video.audio.write_audiofile(audio_path, bitrate="128k")
-                    return audio_path
-                except Exception as e:
-                    raise Exception(f"Failed to extract audio using FFmpeg and MoviePy: {e}")
+                raise Exception(f"Failed to extract audio using FFmpeg: {stderr.decode()}")
             
             return audio_path
         except Exception as e:
