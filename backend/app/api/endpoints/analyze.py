@@ -5,6 +5,7 @@ from typing import Optional
 import os
 import shutil
 import datetime
+import aiofiles
 from backend.app.services.video_service import VideoService
 from backend.app.services.ai_service import AIService
 from backend.app.core.config import settings
@@ -23,8 +24,10 @@ async def upload_video(
     job_id = str(uuid.uuid4())
     file_path = os.path.join(settings.UPLOAD_DIR, f"{job_id}_{file.filename}")
     
-    with open(file_path, "wb") as buffer:
-        shutil.copyfileobj(file.file, buffer)
+    # Use aiofiles to save the file without blocking the event loop
+    async with aiofiles.open(file_path, "wb") as buffer:
+        while content := await file.read(1048576): # 1MB chunks
+            await buffer.write(content)
     
     # Initialize status in DB
     db = request.app.mongodb

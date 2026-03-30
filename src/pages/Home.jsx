@@ -56,7 +56,13 @@ const Home = () => {
             if (file) {
                 const formData = new FormData();
                 formData.append('file', file);
-                res = await axios.post('/api/analyze/upload', formData);
+                res = await axios.post('/api/analyze/upload', formData, {
+                    onUploadProgress: (progressEvent) => {
+                        const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+                        setProgress(percentCompleted);
+                        setMsg(`Uploading Video... ${percentCompleted}%`);
+                    }
+                });
             } else {
                 res = await axios.post('/api/analyze/url', { url });
             }
