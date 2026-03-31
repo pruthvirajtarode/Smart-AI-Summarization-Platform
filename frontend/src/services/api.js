@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-    baseURL: '/api/v1',
+    baseURL: 'http://51.20.42.220:8000/api/v1',
 });
 
 export const processVideo = (formData, onProgress) => {
