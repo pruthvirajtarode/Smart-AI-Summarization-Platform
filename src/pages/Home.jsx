@@ -4,6 +4,10 @@ import { Upload, Link as LinkIcon, Cloud, FileVideo, CheckCircle2, Loader2, Spar
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
+// Connect directly to your high-performance EC2 backend
+// This bypasses Vercel's 4.5MB limit for large video uploads
+const EC2_BACKEND_URL = 'http://51.20.42.220:8000';
+
 const Home = () => {
     const [url, setUrl] = useState("");
     const [file, setFile] = useState(null);
@@ -27,9 +31,9 @@ const Home = () => {
     const pollStatus = async (id) => {
         const interval = setInterval(async () => {
             try {
-                const res = await axios.get(`/api/analyze/status/${id}`);
+                const res = await axios.get(`${EC2_BACKEND_URL}/api/analyze/status/${id}`);
                 const data = res.data;
-                setProgress(data.progress);
+                setProgress(data.progress || 0);
                 setMsg(data.message || "Processing...");
                 
                 if (data.status === "completed") {
@@ -49,22 +53,17 @@ const Home = () => {
     const handleUpload = async () => {
         if (!file && !url) return;
         
-        // Client-side size check for Vercel limit (~4.5MB)
-        if (file && file.size > 4 * 1024 * 1024) {
-            setMsg("File is too large for Vercel (4MB limit). Please use Video URL instead.");
-            return;
-        }
-
         setLoading(true);
         setStatus("starting");
-        setMsg(""); // Clear previous messages
+        setMsg(""); 
         
         try {
             let res;
             if (file) {
                 const formData = new FormData();
                 formData.append('file', file);
-                res = await axios.post('/api/analyze/upload', formData, {
+                // Send directly to EC2 to bypass Vercel body limits
+                res = await axios.post(`${EC2_BACKEND_URL}/api/analyze/upload`, formData, {
                     onUploadProgress: (progressEvent) => {
                         const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
                         setProgress(percentCompleted);
@@ -72,7 +71,7 @@ const Home = () => {
                     }
                 });
             } else {
-                res = await axios.post('/api/analyze/url', { url });
+                res = await axios.post(`${EC2_BACKEND_URL}/api/analyze/url`, { url });
             }
             
             const id = res.data.job_id;
@@ -81,11 +80,7 @@ const Home = () => {
         } catch (err) {
             console.error("Upload error", err);
             setLoading(false);
-            if (err.response && err.response.status === 413) {
-                setMsg("File too large. Vercel's limit is 4.5MB. Please use the URL option.");
-            } else {
-                setMsg("Error starting analysis.");
-            }
+            setMsg("Error starting analysis. Ensure backend is running at http://51.20.42.220:8000");
         }
     };
 
@@ -116,19 +111,10 @@ const Home = () => {
                         ) : (
                             <div>
                                 <p className="text-lg font-medium">Drag and drop video</p>
-                                <p className="text-sm text-slate-500 mt-1">MP4, MOV (Max 4MB for direct upload)</p>
+                                <p className="text-sm text-slate-500 mt-1">MP4, MOV up to 500MB</p>
                             </div>
                         )}
                     </div>
-
-                    {msg && msg.includes("too large") && (
-                        <div className="bg-amber-500/10 border border-amber-500/20 p-4 rounded-xl flex items-center gap-3 animate-in fade-in zoom-in duration-300">
-                            <AlertCircle className="w-5 h-5 text-amber-500 shrink-0" />
-                            <p className="text-xs text-amber-200">
-                                Vercel has a 4.5MB limit. For larger videos, please use a **Video Link** (YouTube/S3) or upload a smaller clip.
-                            </p>
-                        </div>
-                    )}
 
                     <div className="relative">
                         <div className="absolute inset-0 flex items-center">
