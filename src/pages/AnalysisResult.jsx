@@ -14,6 +14,10 @@ import {
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
+// Auto-detect production environment to prevent Mixed Content errors
+const isVercel = window.location.hostname.includes('vercel.app');
+const API_BASE = isVercel ? '/api/analyze' : 'http://51.20.42.220:8000/api/analyze';
+
 const AnalysisResult = () => {
     const { id } = useParams();
     const [data, setData] = useState(null);
@@ -22,7 +26,7 @@ const AnalysisResult = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const res = await axios.get(`/api/analyze/result/${id}`);
+                const res = await axios.get(`${API_BASE}/result/${id}`);
                 setData(res.data);
                 setLoading(false);
             } catch (err) {
