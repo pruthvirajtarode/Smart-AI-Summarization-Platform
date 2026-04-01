@@ -1,5 +1,8 @@
 import uuid
 from fastapi import APIRouter, UploadFile, File, BackgroundTasks, HTTPException, Request
+from fastapi.responses import JSONResponse
+import boto3
+from botocore.exceptions import ClientError
 from pydantic import BaseModel
 from typing import Optional
 import os
@@ -11,6 +14,39 @@ from backend.app.services.ai_service import AIService
 from backend.app.core.config import settings
 
 router = APIRouter()
+
+# S3 configuration (use environment variables for credentials and bucket)
+AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
+AWS_REGION = os.getenv("AWS_REGION", "us-east-1")
+S3_BUCKET = os.getenv("S3_BUCKET_NAME")
+
+def create_presigned_url(bucket_name, object_name, expiration=3600):
+    """Generate a presigned URL to allow upload to S3"""
+    s3_client = boto3.client(
+        's3',
+        aws_access_key_id=AWS_ACCESS_KEY_ID,
+        aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
+        region_name=AWS_REGION
+    )
+    try:
+        response = s3_client.generate_presigned_url('put_object',
+                                                    Params={'Bucket': bucket_name, 'Key': object_name},
+                                                    ExpiresIn=expiration)
+    except ClientError as e:
+        return None
+    return response
+
+# Endpoint to get a presigned S3 upload URL
+@router.post("/s3-presigned-url")
+async def get_presigned_url(filename: str):
+    if not S3_BUCKET:
+        return JSONResponse(status_code=500, content={"error": "S3_BUCKET_NAME not configured"})
+    object_name = f"uploads/{filename}"
+    url = create_presigned_url(S3_BUCKET, object_name)
+    if not url:
+        return JSONResponse(status_code=500, content={"error": "Could not generate presigned URL"})
+    return {"url": url, "key": object_name}
 
 class URLRequest(BaseModel):
     url: str

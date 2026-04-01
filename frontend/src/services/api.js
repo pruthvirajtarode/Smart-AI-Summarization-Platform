@@ -1,11 +1,12 @@
 import axios from 'axios';
 
 const api = axios.create({
-    baseURL: 'http://51.20.42.220:8000/api/v1',
+    baseURL: 'http://51.20.42.220:8000/api/analyze',
 });
 
+
 export const processVideo = (formData, onProgress) => {
-    return api.post('/process/video', formData, {
+    return api.post('/upload', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
         onUploadProgress: (progressEvent) => {
             if (onProgress) {
@@ -17,7 +18,7 @@ export const processVideo = (formData, onProgress) => {
 };
 
 export const processDocument = (formData, onProgress) => {
-    return api.post('/process/document', formData, {
+    return api.post('/document', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
         onUploadProgress: (progressEvent) => {
             if (onProgress) {
@@ -28,8 +29,8 @@ export const processDocument = (formData, onProgress) => {
     });
 };
 
-export const getHistory = () => api.get('/uploads');
+export const getHistory = () => api.get('/history');
 
-export const getStatus = (processId) => api.get(`/status/${processId}`);
+export const getStatus = (jobId) => api.get(`/status/${jobId}`);
 
 export default api;
