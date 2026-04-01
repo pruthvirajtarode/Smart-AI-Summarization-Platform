@@ -4,9 +4,9 @@ import { Upload, Link as LinkIcon, Cloud, FileVideo, CheckCircle2, Loader2, Spar
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-// Connect directly to your high-performance EC2 backend
-// This bypasses Vercel's 4.5MB limit for large video uploads
-const EC2_BACKEND_URL = 'http://51.20.42.220:8000';
+// Auto-detect production environment to prevent Mixed Content errors
+const isVercel = window.location.hostname.includes('vercel.app');
+const API_BASE = isVercel ? '/api/analyze' : 'http://51.20.42.220:8000/api/analyze';
 
 const Home = () => {
     const [url, setUrl] = useState("");
@@ -31,7 +31,7 @@ const Home = () => {
     const pollStatus = async (id) => {
         const interval = setInterval(async () => {
             try {
-                const res = await axios.get(`${EC2_BACKEND_URL}/api/analyze/status/${id}`);
+                const res = await axios.get(`${API_BASE}/status/${id}`);
                 const data = res.data;
                 setProgress(data.progress || 0);
                 setMsg(data.message || "Processing...");
@@ -53,6 +53,12 @@ const Home = () => {
     const handleUpload = async () => {
         if (!file && !url) return;
         
+        // Vercel strict limit check for direct file uploads
+        if (isVercel && file && file.size > 4.2 * 1024 * 1024) {
+            setMsg("File too large for Vercel (4.5MB limit). Use the 'AI URL' option for large videos!");
+            return;
+        }
+
         setLoading(true);
         setStatus("starting");
         setMsg(""); 
@@ -62,8 +68,7 @@ const Home = () => {
             if (file) {
                 const formData = new FormData();
                 formData.append('file', file);
-                // Send directly to EC2 to bypass Vercel body limits
-                res = await axios.post(`${EC2_BACKEND_URL}/api/analyze/upload`, formData, {
+                res = await axios.post(`${API_BASE}/upload`, formData, {
                     onUploadProgress: (progressEvent) => {
                         const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
                         setProgress(percentCompleted);
@@ -71,7 +76,7 @@ const Home = () => {
                     }
                 });
             } else {
-                res = await axios.post(`${EC2_BACKEND_URL}/api/analyze/url`, { url });
+                res = await axios.post(`${API_BASE}/url`, { url });
             }
             
             const id = res.data.job_id;
@@ -80,7 +85,13 @@ const Home = () => {
         } catch (err) {
             console.error("Upload error", err);
             setLoading(false);
-            setMsg("Error starting analysis. Ensure backend is running at http://51.20.42.220:8000");
+            if (err.response?.status === 413) {
+                setMsg("File too large for Vercel. Please use a YouTube URL instead.");
+            } else {
+                setMsg(isVercel 
+                    ? "Error starting analysis. Try a smaller file or a URL."
+                    : "Error. Ensure backend is running at http://51.20.42.220:8000");
+            }
         }
     };
 
