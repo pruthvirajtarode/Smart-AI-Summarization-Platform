@@ -97,7 +97,25 @@ const Home = () => {
     };
 
     return (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+        <div className="space-y-8">
+            {isVercel && (
+                <div className="bg-indigo-600/10 border border-indigo-500/20 p-4 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-4 animate-pulse">
+                    <div className="flex items-center gap-3 text-indigo-400">
+                        <Zap className="w-5 h-5 fill-indigo-400" />
+                        <p className="text-sm font-semibold">Running in Lite Mode (Vercel). Large videos may timeout.</p>
+                    </div>
+                    <a 
+                        href="http://51.20.42.220" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="px-6 py-2 bg-indigo-500 text-white rounded-xl text-xs font-bold hover:bg-indigo-600 transition-all shadow-lg shadow-indigo-500/40"
+                    >
+                        🚀 Switch to High-Performance Server
+                    </a>
+                </div>
+            )}
+            
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
             <div className="space-y-8">
                 <div className="glass p-8 rounded-3xl space-y-6">
                     <h3 className="text-xl font-medium flex items-center gap-2">
@@ -216,7 +234,7 @@ const Home = () => {
                        <p className="text-xs text-amber-600/80 mt-1">Complex audio with secondary speakers may affect the instructor score accuracy. Best used with single-instructor high-quality audio.</p>
                    </div>
                 </div>
-            </div>
+                </div>
         </div>
     );
 };
