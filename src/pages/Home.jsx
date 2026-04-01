@@ -53,19 +53,22 @@ const Home = () => {
     const handleUpload = async () => {
         if (!file && !url) return;
         
-        // Vercel strict limit check for direct file uploads
-        if (isVercel && file && file.size > 4.2 * 1024 * 1024) {
-            setMsg("File too large for Vercel (4.5MB limit). Use the 'AI URL' option for large videos!");
-            return;
-        }
-
         setLoading(true);
         setStatus("starting");
         setMsg(""); 
         
         try {
             let res;
-            if (file) {
+            if (url) {
+                // Prioritize URL if provided
+                res = await axios.post(`${API_BASE}/url`, { url });
+            } else if (file) {
+                // Only check file size if we are actually uploading the file
+                if (isVercel && file.size > 4.2 * 1024 * 1024) {
+                    setMsg("File too large for Vercel (4.5MB limit). Please use a smaller file or the URL option.");
+                    setLoading(false);
+                    return;
+                }
                 const formData = new FormData();
                 formData.append('file', file);
                 res = await axios.post(`${API_BASE}/upload`, formData, {
@@ -75,8 +78,6 @@ const Home = () => {
                         setMsg(`Uploading Video... ${percentCompleted}%`);
                     }
                 });
-            } else {
-                res = await axios.post(`${API_BASE}/url`, { url });
             }
             
             const id = res.data.job_id;
