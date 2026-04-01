@@ -48,8 +48,16 @@ const Home = () => {
 
     const handleUpload = async () => {
         if (!file && !url) return;
+        
+        // Client-side size check for Vercel limit (~4.5MB)
+        if (file && file.size > 4 * 1024 * 1024) {
+            setMsg("File is too large for Vercel (4MB limit). Please use Video URL instead.");
+            return;
+        }
+
         setLoading(true);
         setStatus("starting");
+        setMsg(""); // Clear previous messages
         
         try {
             let res;
@@ -73,7 +81,11 @@ const Home = () => {
         } catch (err) {
             console.error("Upload error", err);
             setLoading(false);
-            setMsg("Error starting analysis.");
+            if (err.response && err.response.status === 413) {
+                setMsg("File too large. Vercel's limit is 4.5MB. Please use the URL option.");
+            } else {
+                setMsg("Error starting analysis.");
+            }
         }
     };
 
@@ -104,10 +116,19 @@ const Home = () => {
                         ) : (
                             <div>
                                 <p className="text-lg font-medium">Drag and drop video</p>
-                                <p className="text-sm text-slate-500 mt-1">MP4, MOV up to 500MB</p>
+                                <p className="text-sm text-slate-500 mt-1">MP4, MOV (Max 4MB for direct upload)</p>
                             </div>
                         )}
                     </div>
+
+                    {msg && msg.includes("too large") && (
+                        <div className="bg-amber-500/10 border border-amber-500/20 p-4 rounded-xl flex items-center gap-3 animate-in fade-in zoom-in duration-300">
+                            <AlertCircle className="w-5 h-5 text-amber-500 shrink-0" />
+                            <p className="text-xs text-amber-200">
+                                Vercel has a 4.5MB limit. For larger videos, please use a **Video Link** (YouTube/S3) or upload a smaller clip.
+                            </p>
+                        </div>
+                    )}
 
                     <div className="relative">
                         <div className="absolute inset-0 flex items-center">
